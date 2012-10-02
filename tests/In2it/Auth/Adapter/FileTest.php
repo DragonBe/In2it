@@ -10,6 +10,13 @@ class In2it_Auth_Adapter_FileTest extends PHPUnit_Framework_TestCase
             array ('abcd', '123hup1234'),
         );
     }
+    public function badDataProvider()
+    {
+        return array (
+            array ('test', 'test123'),
+            array ('', ''),
+        );
+    }
     /**
      * @dataProvider goodDataProvider
      */
@@ -26,5 +33,22 @@ class In2it_Auth_Adapter_FileTest extends PHPUnit_Framework_TestCase
         $this->assertType('Zend_Auth_Result', $result);
         $this->assertSame(Zend_Auth_Result::SUCCESS, $result->getCode());
         $this->assertTrue($result->isValid());
+    }
+    /**
+     * @dataProvider badDataProvider
+     */
+    public function testAuthenticationFails($username, $password)
+    {
+        $filename = dirname(__FILE__) . '/_files/testusers';
+        
+        $file = new In2it_Auth_Adapter_File(
+            $username,
+            $password,
+            $filename
+        );
+        $result = $file->authenticate();
+        $this->assertType('Zend_Auth_Result', $result);
+        $this->assertSame(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, $result->getCode());
+        $this->assertFalse($result->isValid());
     }
 }
