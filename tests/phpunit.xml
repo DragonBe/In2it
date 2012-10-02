@@ -1,0 +1,5 @@
+<phpunit bootstrap="./bootstrap.php" colors="true" include-path="/var/root/zf-1.12/library">
+    <testsuite name="In2it library Tests">
+        <directory>./In2it</directory>
+    </testsuite>
+</phpunit>
