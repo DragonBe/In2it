@@ -67,26 +67,25 @@ class In2it_Validate_PasswordStrength extends Zend_Validate_Abstract
         
         switch ($this->strength) {
             case self::PASSWD_WEAK:
-                if (6 > strlen($password)) {
-                    $this->_error(self::PASSWD_WEAK);
+                if (0 === strlen($password) || 6 < strlen($password)) {
+                    $this->_error($this->messageTemplates[self::PASSWD_WEAK]);
                     return false;
                 }
                 break;
             case self::PASSWD_MEDIUM:
-                if (8 > strlen($password) 
-                    || 0 === preg_match('/[A-Z]/', $password) 
-                    || 0 === preg_match('/[0-9]/', $password)) {
-                    $this->_error(self::PASSWD_MEDIUM);
+                if (1 === preg_match('/[a-z]/', $password) 
+                    && 1 === preg_match('/[0-9]/', $password)) {
+                    $this->_error($this->messageTemplates[self::PASSWD_MEDIUM]);
                     return false;
                 }
                 break;
             case self::PASSWD_STRONG:
                 // @todo: Create a function to check if it's really as strong
                 //        password
-                if (10 > strlen($password)
+                if (10 >= strlen($password)
                     || 0 === preg_match('/[A-Z]/', $password) 
                     || 0 === preg_match('/[0-9]/', $password)) {
-                    $this->_error(self::PASSWD_MEDIUM);
+                    $this->_error($this->messageTemplates[self::PASSWD_STRONG]);
                     return false;
                 }
                 break;
