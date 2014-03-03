@@ -45,10 +45,10 @@ abstract class In2it_Model_Collection implements Countable, SeekableIterator
     /**
      * Adds an element to this collection
      * 
-     * @param In2it_Model_Model $model 
+     * @param In2it_Model_Abstract $model 
      * @return In2it_Model_Collection
      */
-    public function addElement(In2it_Model_Model $model)
+    public function addElement(In2it_Model_Abstract $model)
     {
         $this->_elements[] = $model;
         $this->_count++;
@@ -88,7 +88,7 @@ abstract class In2it_Model_Collection implements Countable, SeekableIterator
     /**
      * The current model from this collection
      * 
-     * @return In2it_Model_Model 
+     * @return In2it_Model_Abstract 
      * @see Iterator::current()
      */
     public function current()

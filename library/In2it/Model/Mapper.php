@@ -63,10 +63,10 @@ abstract class In2it_Model_Mapper
     /**
      * Finds a single instance of a given model
      * 
-     * @param In2it_Model_Model $model
+     * @param In2it_Model_Abstract $model
      * @param mixed $id 
      */
-    public function find(In2it_Model_Model $model, $id)
+    public function find(In2it_Model_Abstract $model, $id)
     {
         $resultSet = $this->getDbTable()->find($id);
         $model->populate($resultSet->current());
@@ -75,12 +75,12 @@ abstract class In2it_Model_Mapper
      * Fetches a single instance of a given model with optionally provided
      * conditions and ordering
      * 
-     * @param In2it_Model_Model $model
+     * @param In2it_Model_Abstract $model
      * @param null|string|array $where
      * @param null|string|array $order 
      */
     public function fetchRow(
-        In2it_Model_Model $model, $where = null, $order = null)
+        In2it_Model_Abstract $model, $where = null, $order = null)
     {
         $resultRow = $this->getDbTable()->fetchRow($where, $order);
         if (null !== $resultRow) {
@@ -90,24 +90,27 @@ abstract class In2it_Model_Mapper
     /**
      * Saves a single instance of a given model into the data storage
      * 
-     * @param In2it_Model_Model $model 
+     * @param In2it_Model_Abstract $model 
      */
-    public function save(In2it_Model_Model $model)
+    public function save(In2it_Model_Abstract $model)
     {
         if (0 < $model->getId()) {
             $this->getDbTable()->update(
                 $model->toArray(), array ('id = ?' => $model->getId())
             );
         } else {
-            $this->getDbTable()->insert($model->toArray());
+            $data = $model->toArray();
+            unset($data['id']);
+            $id = $this->getDbTable()->insert($data);
+            $model->setId($id);
         }
     }
     /**
      * Removes a single instance of a given model from the data storage
      * 
-     * @param In2it_Model_Model $model 
+     * @param In2it_Model_Abstract $model 
      */
-    public function delete(In2it_Model_Model $model)
+    public function delete(In2it_Model_Abstract $model)
     {
         $this->getDbTable()->delete(array ('id = ?' => $model->getId()));
     }
