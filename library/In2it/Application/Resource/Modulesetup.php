@@ -53,8 +53,10 @@ class In2it_Application_Resource_Modulesetup extends Zend_Application_Resource_R
                 foreach ($cfgdir as $file) {
                     if ($file->isFile()) {
                         $filename = $file->getFilename();
-                        $options = $this->_loadOptions($configPath
-                            . DIRECTORY_SEPARATOR . $filename);
+                        $options = $this->_loadOptions(
+                            $configPath . DIRECTORY_SEPARATOR . $filename
+                        );
+
                         if (($len = strpos($filename, '.')) !== false) {
                             $cfgtype = substr($filename, 0, $len);
                         } else {
@@ -62,15 +64,23 @@ class In2it_Application_Resource_Modulesetup extends Zend_Application_Resource_R
                         }
 
                         if (strtolower($cfgtype) == 'module') {
-                            if (array_key_exists($module, $appOptions)) {
-                                if (is_array($appOptions[$module])) {
-                                    $appOptions[$module] =
-                                        array_merge($appOptions[$module], $options);
-                                } else {
-                                    $appOptions[$module] = $options;
-                                }
-                            } else {
-                                $appOptions[$module] = $options;
+                            $appOptions = array_merge_recursive($appOptions, $options);
+
+                            $options = array_change_key_case($options, CASE_LOWER);
+
+                            if (!empty($options['phpsettings'])) {
+                                $this->getBootstrap()->getApplication()
+                                    ->setPhpSettings($options['phpsettings']);
+                            }
+
+                            if (!empty($options['includepaths'])) {
+                                $this->getBootstrap()->getApplication()
+                                    ->setIncludePaths($options['includepaths']);
+                            }
+
+                            if (!empty($options['autoloadernamespaces'])) {
+                                $this->getBootstrap()->getApplication()
+                                    ->setAutoloaderNamespaces($options['autoloadernamespaces']);
                             }
                         } else {
                             $appOptions[$module]['resources'][$cfgtype] = $options;
