@@ -30,7 +30,7 @@ class In2it_Auth_Adapter_FileTest extends PHPUnit_Framework_TestCase
             $filename
         );
         $result = $file->authenticate();
-        $this->assertType('Zend_Auth_Result', $result);
+        $this->assertInstanceOf('Zend_Auth_Result', $result);
         $this->assertSame(Zend_Auth_Result::SUCCESS, $result->getCode());
         $this->assertTrue($result->isValid());
     }
@@ -47,7 +47,7 @@ class In2it_Auth_Adapter_FileTest extends PHPUnit_Framework_TestCase
             $filename
         );
         $result = $file->authenticate();
-        $this->assertType('Zend_Auth_Result', $result);
+        $this->assertInstanceOf('Zend_Auth_Result', $result);
         $this->assertSame(Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID, $result->getCode());
         $this->assertFalse($result->isValid());
     }
