@@ -11,6 +11,10 @@
     <fileset dir="${project.basedir}" id="phpfiles">
         <include name="library/In2it/**/*.php" />
     </fileset>
+
+    <fileset dir="${project.basedir}" id="zend">
+        <include name="library/Zend/**/*.php" />
+    </fileset>
     
     <target name="prepare" description="Clean up the build path">
         <delete dir="${build-dir}" quiet="true" />
@@ -25,6 +29,7 @@
     <target name="phpunit" description="Running unit tests against the source code">
         <coverage-setup database="${coverage-dir}/coverage.db">
             <fileset refid="phpfiles"/>
+            <fileset refid="zend"/>
         </coverage-setup>
     	<phpunit
             printsummary="true"
