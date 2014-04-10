@@ -29,7 +29,6 @@
     <target name="phpunit" description="Running unit tests against the source code">
         <coverage-setup database="${coverage-dir}/coverage.db">
             <fileset refid="phpfiles"/>
-            <fileset refid="zend"/>
         </coverage-setup>
     	<phpunit
             printsummary="true"
