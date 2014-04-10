@@ -1,6 +1,7 @@
 <?php
 
-class In2it_Rest_Route extends Zend_Controller_Router_Route_Abstract {
+class In2it_Rest_Route extends Zend_Controller_Router_Route_Abstract
+{
 
     /**
      * Route configuration
@@ -24,7 +25,13 @@ class In2it_Rest_Route extends Zend_Controller_Router_Route_Abstract {
     public function __construct(array $routes = array())
     {
         // TODO: remove the filter when all routes are migrated
-        $this->_routes = array_filter($routes, function($item) { return !isset($item['method']); });
+        $this->_routes = array_filter(
+            $routes,
+            function($item)
+            {
+                return !isset($item['method']);
+            }
+        );
     }
 
 
@@ -34,7 +41,8 @@ class In2it_Rest_Route extends Zend_Controller_Router_Route_Abstract {
      * @param Zend_Controller_Request_Abstract $request
      * @return Zend_Controller_Request_Abstract
      */
-    public function match($request) {
+    public function match($request)
+    {
 
         //Zend_Registry::get('logger')->warn('Entering route match method');
         
@@ -44,7 +52,7 @@ class In2it_Rest_Route extends Zend_Controller_Router_Route_Abstract {
         list($requestUri) = explode('?', $request->getRequestUri());
 
         // Removing any preceeding and trailing slashes
-        $requestUri = trim($requestUri,'/');
+        $requestUri = trim($requestUri, '/');
 
         if ($requestMethod==='POST') {
             if ($override = $request->getHeader('X-HTTP-Method-Override')) {
@@ -57,7 +65,7 @@ class In2it_Rest_Route extends Zend_Controller_Router_Route_Abstract {
 
         $foundRoute = null;
         foreach($this->_routes as $route) {
-            if (preg_match($route['route'],$requestUri,$matches)) {
+            if (preg_match($route['route'], $requestUri, $matches)) {
                 $foundRoute = $route;
                 break;
             }
@@ -71,7 +79,7 @@ class In2it_Rest_Route extends Zend_Controller_Router_Route_Abstract {
         );
 
         // Taking any named subpatterns and adding it to the parameters
-        foreach($matches as $key=>$value) {
+        foreach($matches as $key => $value) {
             if (is_string($key)) {
                 $params[$key] = $value;
             }
@@ -83,9 +91,10 @@ class In2it_Rest_Route extends Zend_Controller_Router_Route_Abstract {
     }
 
     /**
-     * Assembles user submitted parameters forming a URL path defined by this route
+     * Assembles user submitted parameters forming a URL path defined by this
+     * route
      *
-     * @param array $data An array of variable and value pairs used as parameters
+     * @param array $data An array of key and value pairs used as parameters
      * @param bool $reset Weither to reset the current params
      * @param bool $encode Weither to return urlencoded string
      * @return string Route path with user submitted parameters
