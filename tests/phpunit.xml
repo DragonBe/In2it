@@ -11,4 +11,14 @@
             <directory suffix=".php">../library/Zend</directory>
         </blacklist>
     </filter>
+    <logging>
+        <log
+            type="coverage-html"
+            target="../build/coverage"
+            charset="UTF-8"
+            yui="true"
+            highlight="true"
+            lowUpperBound="35"
+            highLowerBound="70"/>
+    </logging>
 </phpunit>

@@ -11,6 +11,10 @@
     <fileset dir="${project.basedir}" id="phpfiles">
         <include name="library/In2it/**/*.php" />
     </fileset>
+
+    <fileset dir="${project.basedir}" id="zend">
+        <include name="library/Zend/**/*.php" />
+    </fileset>
     
     <target name="prepare" description="Clean up the build path">
         <delete dir="${build-dir}" quiet="true" />
@@ -23,23 +27,25 @@
     </target>
     
     <target name="phpunit" description="Running unit tests against the source code">
-	<coverage-setup database="${coverage-dir}/coverage.db">
-		<fileset refid="phpfiles"/>
-	</coverage-setup>
+        <coverage-setup database="${coverage-dir}/coverage.db">
+            <fileset refid="phpfiles"/>
+            <fileset refid="zend"/>
+        </coverage-setup>
     	<phpunit
-		printsummary="true"
-		codecoverage="true" 
-		haltonfailure="true" 
-		haltonerror="true"
-		configuration="${project.basedir}/tests/phpunit.xml">
-		<formatter todir="${logs-dir}" type="xml" outfile="junit.xml"/>
-		<formatter todir="${logs-dir}" type="clover" outfile="clover.xml"/>
-		<batchtest>
-			<fileset dir="${project.basedir}/tests">
-				<include name="**/*.php"/>
-			</fileset>
-		</batchtest>
-	</phpunit>
+            printsummary="true"
+            codecoverage="true"
+            haltonfailure="true"
+            haltonerror="true"
+            configuration="${project.basedir}/tests/phpunit.xml">
+            <formatter todir="${logs-dir}" type="xml" outfile="junit.xml"/>
+            <formatter todir="${logs-dir}" type="clover" outfile="clover.xml"/>
+            <formatter todir="${logs-dir}" type="plain" outfile="coverage.xml"/>
+            <batchtest>
+                <fileset dir="${project.basedir}/tests">
+                    <include name="**/*.php"/>
+                </fileset>
+            </batchtest>
+        </phpunit>
     </target>
 
     <target name="phplint" description="Checking syntax">
@@ -104,9 +110,9 @@
         </phpcodesniffer>
     </target>
 
-<target 
-    name="build" 
-    description="Building app"
-    depends="prepare,phpunit,phplint,phpdoc,pdepend,phpmd,phpcpd,phploc,phpcs"/>
+    <target
+        name="build"
+        description="Building app"
+        depends="prepare,phpunit,phplint,phpdoc,pdepend,phpmd,phpcpd,phploc,phpcs"/>
 
 </project>
