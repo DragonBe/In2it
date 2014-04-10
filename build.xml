@@ -1,35 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Application build" default="build">
-    <property file="build.properties"/>
-    <property file="local.properties" override="true" />
+
+    <property name="build-dir" value="${project.basedir}/build"/>
+    <property name="logs-dir" value="${build-dir}/logs"/>
+    <property name="docs-dir" value="${build-dir}/docs"/>
+    <property name="coverage-dir" value="${build-dir}/coverage"/>
+    <property name="pdepend-dir" value="${build-dir}/pdepend"/>
+    <property name="browser-dir" value="${build-dir}/browser"/>
 
     <fileset dir="${project.basedir}" id="phpfiles">
-        <include name="application/**/*.php" />
-        <!--include name="library/In2it/**/*.php" /-->
+        <include name="library/In2it/**/*.php" />
     </fileset>
     
     <target name="prepare" description="Clean up the build path">
-        <delete dir="${project.basedir}/build" quiet="true" />
-        <mkdir dir="${project.basedir}/build" />
-		<mkdir dir="${project.basedir}/build/docs" />
-        <mkdir dir="${project.basedir}/build/logs" />
-        <mkdir dir="${project.basedir}/build/coverage" />
-        <mkdir dir="${project.basedir}/build/pdepend" />
-        <mkdir dir="${project.basedir}/build/browser" />
-        <!-- for some reason on the server it won't run without a touch -->
-        <touch file="${project.basedir}/build/logs/checkstyle.xml" />
+        <delete dir="${build-dir}" quiet="true" />
+        <mkdir dir="${build-dir}" />
+        <mkdir dir="${logs-dir}" />
+        <mkdir dir="${docs-dir}" />
+        <mkdir dir="${coverage-dir}" />
+        <mkdir dir="${pdepend-dir}" />
+        <mkdir dir="${browser-dir}" />
     </target>
     
     <target name="phpunit" description="Running unit tests against the source code">
-        <exec 
-            command="/usr/bin/phpunit --coverage-html ${project.basedir}/build/coverage --coverage-clover ${project.basedir}/build/logs/clover.xml --log-junit ${project.basedir}/build/logs/junit.xml"
-            dir="${project.basedir}/tests" 
-            passthru="true" />
+	<coverage-setup database="${coverage-dir}/coverage.db">
+		<fileset refid="phpfiles"/>
+	</coverage-setup>
+    	<phpunit
+		printsummary="true"
+		codecoverage="true" 
+		haltonfailure="true" 
+		haltonerror="true"
+		configuration="${project.basedir}/tests/phpunit.xml">
+		<formatter todir="${logs-dir}" type="xml" outfile="junit.xml"/>
+		<formatter todir="${logs-dir}" type="clover" outfile="clover.xml"/>
+		<batchtest>
+			<fileset dir="${project.basedir}/tests">
+				<include name="**/*.php"/>
+			</fileset>
+		</batchtest>
+	</phpunit>
     </target>
-    
-    <target name="build" description="Building app">
-        <phingCall target="prepare" />
-        <phingCall target="phpunit" />
+
+    <target name="phplint" description="Checking syntax">
+    	<phplint
+		haltonfailure="true">
+		<fileset refid="phpfiles"/>
+	</phplint>
     </target>
-    
+
+    <target name="phpdoc" description="Generating PHP Documentation">
+	<phpdoc2 
+		title="In2it API Documentation"
+		destdir="${docs-dir}">
+		<fileset refid="phpfiles"/>
+	</phpdoc2>
+    </target>
+
+    <target name="pdepend" description="Code dependency calculations">
+	<phpdepend>
+		<fileset refid="phpfiles"/>
+		<logger type="jdepend-xml" outfile="${logs-dir}/jdepend.xml"/>
+		<logger type="jdepend-chart" outfile="${pdepend-dir}/jdepend.svg"/>
+		<logger type="overview-pyramid" outfile="${pdepend-dir}/pyramid.svg"/>
+		<analyzer type="coderank-mode" value="method"/>
+	</phpdepend>
+    </target>
+
+    <target name="phpmd" description="Mess detection">
+	<phpmd>
+		<fileset refid="phpfiles"/>
+		<formatter type="xml" outfile="${logs-dir}/pmd.xml"/>
+	</phpmd>
+    </target>
+
+    <target name="phpcpd" description="Copy/Paste Detection">
+	<phpcpd>
+		<fileset refid="phpfiles"/>
+		<formatter type="pmd" outfile="${logs-dir}/pmd-cpd.xml"/>
+	</phpcpd>
+    </target>
+
+    <target name="phploc" description="Measures and logs the size of the project">
+    	<phploc
+		reportType="xml"
+		reportName="phploc"
+		reportDirectory="${logs-dir}">
+		<fileset refid="phpfiles"/>
+	</phploc>
+    </target>
+
+    <target name="phpcs" description="Run PHP Code Sniffer">
+        <phpcodesniffer
+                standard="Zend"
+                showSniffs="true"
+                showWarnings="true"
+                haltonerror="false"
+                haltonwarning="false"
+                skipversioncheck="true"
+                verbosity="0">
+            <fileset refid="phpfiles"/>
+            <formatter type="checkstyle" outfile="${logs-dir}/checkstyle.xml"/>
+        </phpcodesniffer>
+    </target>
+
+<target 
+    name="build" 
+    description="Building app"
+    depends="prepare,phpunit,phplint,phpdoc,pdepend,phpmd,phpcpd,phploc,phpcs"/>
+
 </project>
