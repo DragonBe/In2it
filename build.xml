@@ -34,6 +34,7 @@
 		configuration="${project.basedir}/tests/phpunit.xml">
 		<formatter todir="${logs-dir}" type="xml" outfile="junit.xml"/>
 		<formatter todir="${logs-dir}" type="clover" outfile="clover.xml"/>
+        <formatter todir="${coverage-dir}" type=""
 		<batchtest>
 			<fileset dir="${project.basedir}/tests">
 				<include name="**/*.php"/>
