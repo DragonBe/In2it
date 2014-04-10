@@ -46,9 +46,6 @@
                 </fileset>
             </batchtest>
         </phpunit>
-        <coverage-report outfile="${logs-dir}/coverage.xml">
-            <report todir="${coverage-dir}"/>
-        </coverage-report>
     </target>
 
     <target name="phplint" description="Checking syntax">
@@ -113,9 +110,9 @@
         </phpcodesniffer>
     </target>
 
-<target 
-    name="build" 
-    description="Building app"
-    depends="prepare,phpunit,phplint,phpdoc,pdepend,phpmd,phpcpd,phploc,phpcs"/>
+    <target
+        name="build"
+        description="Building app"
+        depends="prepare,phpunit,phplint,phpdoc,pdepend,phpmd,phpcpd,phploc,phpcs"/>
 
 </project>
