@@ -19,7 +19,7 @@
  * @package In2it_Model
  * @copyright Copyright (c) 2012 in2it vof
  */
-abstract class In2it_Model_Abstract implements In2it_Model_Interface
+abstract class In2it_Model_Abstract implements In2it_Model_Interface, In2it_Model_ValidatorInterface
 {
     /**
      * @var Zend_Filter_Input The filtering and validation procedure
@@ -44,33 +44,7 @@ abstract class In2it_Model_Abstract implements In2it_Model_Interface
         $this->init();
         if (null !== $params) {
             $this->populate($params);
-            if(null !== $this->getInputFilter()) {
-                if (!is_array($params)) {
-                    $params = $params->toArray();
-                }
-                $this->getInputFilter()->setData($params);
-            }
         }
-    }
-    /**
-     * Sets the identifier for this Model
-     * 
-     * @param int $id The ID for the Model
-     * @return In2it_Model_Abstract
-     */
-    public function setId($id)
-    {
-        $this->_setId = (int) $id;
-        return $this;
-    }
-    /**
-     * Retrieves the identifier from this Model
-     * 
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->_id;
     }
 
     /**

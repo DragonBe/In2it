@@ -26,6 +26,16 @@ abstract class In2it_Model_Mapper
      * @var Zend_Db_Table_Abstract
      */
     protected $_dbTable;
+
+    /**
+     * @var Zend_Log
+     */
+    protected $_logger;
+
+    /**
+     * @var Zend_Cache
+     */
+    protected $_cache;
     /**
      * Sets the data gateway for this Mapper class
      * 
@@ -141,4 +151,72 @@ abstract class In2it_Model_Mapper
         }
         return $this;
     }
+
+    /**
+     * @return Zend_Log
+     */
+    public function getLogger()
+    {
+        if (null === $this->_logger) {
+            $logger = new Zend_Log();
+            $logger->addWriter(new Zend_Log_Writer_Mock);
+            $this->setLogger($logger);
+        }
+        return $this->_logger;
+    }
+
+    /**
+     * @param Zend_Log $logger
+     * @return In2it_Model_Mapper
+     */
+    public function setLogger(Zend_Log $logger)
+    {
+        $this->_logger = $logger;
+        return $this;
+    }
+
+    /**
+     * @return Zend_Cache_Core
+     */
+    public function getCache()
+    {
+        if (null === $this->_cache) {
+            // A dummy cache entry for functionality purposes
+            $cache = Zend_Cache::factory('Core', 'File', array ('caching' => false), array ('cache_dir' => '/tmp'));
+            $this->setCache($cache);
+        }
+        return $this->_cache;
+    }
+
+    /**
+     * @param Zend_Cache_Core $cache
+     * @return In2it_Model_Mapper
+     */
+    public function setCache(Zend_Cache_Core $cache)
+    {
+        $this->_cache = $cache;
+        return $this;
+    }
+
+    /**
+     * Cleans up a key to be used for caching purposes
+     *
+     * @param string|array $item
+     * @return string
+     */
+    protected function _createCleanKey($item)
+    {
+        if (is_string($item)) {
+            $item = array($item);
+        }
+        $string = implode('_', $item);
+        $string = str_replace(array('`', ' '),array('', '_'), $string);
+        $string = filter_var($string, FILTER_SANITIZE_STRING, array (
+            FILTER_FLAG_STRIP_LOW,
+            FILTER_FLAG_STRIP_BACKTICK,
+            FILTER_FLAG_STRIP_HIGH,
+        ));
+        return $string;
+    }
+
 }
