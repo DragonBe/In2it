@@ -27,7 +27,7 @@
     </target>
     
     <target name="phpunit" description="Running unit tests against the source code">
-        <coverage-setup database="${coverage-dir}/coverage.db">
+        <!--coverage-setup database="${coverage-dir}/coverage.db">
             <fileset refid="phpfiles"/>
         </coverage-setup>
     	<phpunit
@@ -44,7 +44,11 @@
                     <include name="**/*.php"/>
                 </fileset>
             </batchtest>
-        </phpunit>
+        </phpunit-->
+        <exec
+            command="/usr/bin/phpunit"
+            dir="${project.basedir}/tests"
+            passthru="true"/>
     </target>
 
     <target name="phplint" description="Checking syntax">
