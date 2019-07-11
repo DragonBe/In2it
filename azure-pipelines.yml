@@ -1,0 +1,47 @@
+# PHP
+# Test and package your PHP project.
+# Add steps that run tests, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/php
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  phpVersion: 7.2
+
+steps:
+- script: |
+    sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+    sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+    sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+    sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+    sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+    php -version
+  displayName: 'Use PHP version $(phpVersion)'
+
+- script: echo 'Hello World'
+  displayName: 'Build WordPress Container'
+
+- script: echo 'Hello World'
+  displayName: 'Get latest WordPress version'
+
+- script: echo 'Hello World'
+  displayName: 'Get latest version of installed WordPress plugins'
+
+- script: echo 'Hello World'
+  displayName: 'Get latest version of installed WordPress themes'
+
+- script: echo 'Hello World'
+  displayName: 'Compare pre-release with production'
+
+- script: echo 'Hello World'
+  displayName: 'Package new WordPress build'
+
+- script: echo 'Hello World'
+  displayName: 'Deploy new WordPress build'
+
+- bash: "curl -sS -X POST https://ohdear.app/api/checks/7779/request-run -H 'Authorization: Bearer $(ohdear_api_token)' -H 'Accept: application/json' -H 'Content-Type: application/json'"
+  displayName: 'Run Oh Dear! Site validation smoke test'
